@@ -787,7 +787,8 @@ void StartRPCThreads()
     // Try a dual IPv6/IPv4 socket, falling back to separate IPv4 and IPv6 sockets
     const bool loopback = !mapArgs.count("-rpcallowip");
     asio::ip::address bindAddress = loopback ? asio::ip::address_v6::loopback() : asio::ip::address_v6::any();
-    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", GetDefaultRPCPort()));
+    // GetDefaultRPCPort() is changed to "55884" port
+    ip::tcp::endpoint endpoint(bindAddress, GetArg("-rpcport", "55884"));
     boost::system::error_code v6_only_error;
     boost::shared_ptr<ip::tcp::acceptor> acceptor(new ip::tcp::acceptor(*rpc_io_service));
 
@@ -1069,7 +1070,8 @@ Object CallRPC(const string& strMethod, const Array& params)
     asio::ssl::stream<asio::ip::tcp::socket> sslStream(io_service, context);
     SSLIOStreamDevice<asio::ip::tcp> d(sslStream, fUseSSL);
     iostreams::stream< SSLIOStreamDevice<asio::ip::tcp> > stream(d);
-    if (!d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", itostr(GetDefaultRPCPort()))))
+    // itostr(GetDefaultRPCPort() changed to "55884" port
+    if (!d.connect(GetArg("-rpcconnect", "127.0.0.1"), GetArg("-rpcport", "55884"))))
         throw runtime_error("couldn't connect to server");
 
     // HTTP basic authentication
